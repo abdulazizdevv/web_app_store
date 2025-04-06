@@ -6,30 +6,53 @@ import {
   getProductsBySlug,
 } from '@/service/category.service';
 import React from 'react';
-async function getData(slug: any) {
-  const categories = await getAllCategories({ page: 1, limit: 30 })
-    .then((res) => res?.data)
-    .catch((err) => err);
-  const products = await getProductsBySlug(slug, { page: 1, limit: 50 })
-    .then((res) => res?.data)
-    .catch((err) => err);
 
-  return [categories, products];
+async function getData(slug: string) {
+  try {
+    const categories = await getAllCategories({ page: 1, limit: 30 })
+      .then((res) => res?.data || [])
+      .catch((err) => {
+        console.error('Error fetching categories:', err);
+        return [];
+      });
+
+    const filteredCategory = categories.filter((el: any) => el.slug === slug);
+
+    const productsByCategory = await Promise.all(
+      filteredCategory.map(async (cat: any) => {
+        const products = await getProductsBySlug(cat.slug, {
+          page: 1,
+          limit: 50,
+        });
+        return {
+          category: cat,
+          products: products?.data?.products || [],
+        };
+      })
+    );
+
+    return [categories, productsByCategory];
+  } catch (error) {
+    console.log(error);
+
+    return [[], []];
+  }
 }
 
 export default async function Category({
-  params: { slug },
+  params,
 }: {
   params: { slug: string };
 }) {
-  const [categories, products] = await getData(slug);
+  const { slug } = await params;
+
+  const [categories, productsByCategory] = await getData(slug);
 
   return (
-    <div>
+    <>
       <Banner />
-
       <CategoriesList categories={categories} />
-      <ProductList products={products.products} />
-    </div>
+      <ProductList productsByCategory={productsByCategory} />
+    </>
   );
 }

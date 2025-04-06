@@ -17,22 +17,27 @@ const ProductCard = ({ data }: { data?: IProduct }) => {
       bg={'#494544'}
       cursor={'pointer'}
       _hover={{
-        boxShadow: '#494544',
+        boxShadow: '#2B282899',
       }}
     >
+      <Card.Header
+        p={0}
+        roundedTopRight={8}
+        roundedTopLeft={8}
+        overflow={'hidden'}
+      >
+        <AspectRatio ratio={1} maxH={'325px'}>
+          <Image
+            src={imgSrc}
+            alt='pic'
+            fill
+            loading='eager'
+            priority
+            onError={() => setImgSrc('/no_photo.svg')}
+          />
+        </AspectRatio>
+      </Card.Header>
       <Card.Body gap='2'>
-        <Card.Header p={0}>
-          <AspectRatio ratio={1} maxH={'325px'}>
-            <Image
-              src={imgSrc}
-              alt='pic'
-              fill
-              loading='eager'
-              priority
-              onError={() => setImgSrc('/no_photo.svg')}
-            />
-          </AspectRatio>
-        </Card.Header>
         <Card.Title mt='2' h={8} fontSize={22} lineClamp={2} color={'light'}>
           {data?.title}
         </Card.Title>

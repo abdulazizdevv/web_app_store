@@ -10,6 +10,15 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  turbo: false, // yoki transpilePackages: []
+  async rewrites() {
+    return [
+      {
+        source: '/api/:path*',
+        destination: 'https://dummyjson.com/:path*',
+      },
+    ];
+  },
 };
 
 export default nextConfig;

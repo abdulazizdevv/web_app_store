@@ -1,16 +1,50 @@
-import { Box, HStack } from '@chakra-ui/react';
+import { Box, Container, Heading, HStack, Separator } from '@chakra-ui/react';
 import ProductCard from './_components/ProductCard';
-import { IProduct } from '@/types';
+import { ICategory, IProduct } from '@/types';
 
-const ProductList = ({ products }: { products: IProduct[] }) => {
+const ProductList = ({
+  productsByCategory,
+}: {
+  productsByCategory?: {
+    category: ICategory;
+    products: IProduct[];
+  }[];
+}) => {
   return (
-    <HStack gap={5} mt={4} overflow={'scroll'} scrollbar={'hidden'}>
-      {products?.map((item) => (
-        <Box key={item.id} w={'full'}>
-          <ProductCard data={item} />
+    <>
+      {productsByCategory?.map(({ category, products }) => (
+        <Box key={`${category.slug}-${category.url}`}>
+          <Container>
+            <Heading
+              size='lg'
+              fontSize={32}
+              fontWeight={700}
+              color='white'
+              borderLeft={'4px solid'}
+              borderColor={'primary'}
+              my={'50px'}
+              pl='19px'
+            >
+              {category.name}
+            </Heading>
+          </Container>
+          <HStack
+            px={3}
+            gap={5}
+            mt={4}
+            overflow={'scroll'}
+            scrollbar={'hidden'}
+          >
+            {products.map((product: any) => (
+              <Box key={product.id} w={'full'}>
+                <ProductCard data={product} />
+              </Box>
+            ))}
+          </HStack>
+          <Separator mt={'50px'} />
         </Box>
       ))}
-    </HStack>
+    </>
   );
 };
 

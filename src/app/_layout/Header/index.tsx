@@ -1,3 +1,4 @@
+'use client';
 import {
   Box,
   Button,
@@ -6,13 +7,26 @@ import {
   IconButton,
   Input,
   InputGroup,
+  Popover,
+  Portal,
   Stack,
   Text,
 } from '@chakra-ui/react';
-import React from 'react';
+import React, { useState } from 'react';
 import { Icon } from '@iconify/react';
+import Link from 'next/link';
+import Auth from '@/app/_components/Auth';
+import { useDispatch, useSelector } from 'react-redux';
+import { IRedux } from '@/store/types';
+import { useRouter } from 'next/navigation';
+import { authActions } from '@/store/auth/auth.slice';
 
 const Header = () => {
+  const [open, setOpen] = useState(false);
+  const { access_token } = useSelector((state: IRedux) => state.auth);
+  const router = useRouter();
+  const dispatch = useDispatch();
+
   return (
     <Box
       bg='dark'
@@ -28,9 +42,11 @@ const Header = () => {
           justifyContent='space-between'
           display={{ base: 'none', md: 'flex' }}
         >
-          <Text fontSize={25} fontWeight={700} color='light'>
-            LOGOS
-          </Text>
+          <Link href={'/'}>
+            <Text fontSize={25} fontWeight={700} color='light'>
+              LOGOS
+            </Text>
+          </Link>
 
           <InputGroup
             w={'full'}
@@ -74,9 +90,60 @@ const Header = () => {
               <Text fontWeight={700}>+7 (917) 510-57-59</Text>
             </Stack>
           </HStack>
-          <Button bg='primary' rounded={10} color='light'>
-            Корзина | 4
-          </Button>
+          <HStack>
+            <Button
+              bg='primary'
+              rounded={10}
+              onClick={() =>
+                access_token ? router.push('/cart') : setOpen(true)
+              }
+              color='light'
+            >
+              Корзина | 4
+            </Button>
+            {access_token ? (
+              <>
+                <Popover.Root>
+                  <Popover.Trigger asChild>
+                    <Button bg='primary' rounded={10} color='light'>
+                      <Icon icon='mdi:user' width='24' height='24' />
+                    </Button>
+                  </Popover.Trigger>
+                  <Portal>
+                    <Popover.Positioner>
+                      <Popover.Content maxW={'150px'} p={0}>
+                        <Popover.Body p={1} bg={'dark'}>
+                          <Button
+                            w={'full'}
+                            variant={'outline'}
+                            color={'light'}
+                            _hover={{
+                              color: 'dark',
+                            }}
+                            onClick={() => dispatch(authActions.reset())}
+                          >
+                            <Icon icon='mdi:logout' width='24' height='24' />
+                            Выйти
+                          </Button>
+                        </Popover.Body>
+                      </Popover.Content>
+                    </Popover.Positioner>
+                  </Portal>
+                </Popover.Root>
+              </>
+            ) : (
+              <Button
+                bg='primary'
+                rounded={10}
+                onClick={() =>
+                  access_token ? router.push('/cart') : setOpen(true)
+                }
+                color='light'
+              >
+                Вход
+              </Button>
+            )}
+          </HStack>
         </HStack>
         {/* mobile  */}
         <Stack
@@ -102,26 +169,105 @@ const Header = () => {
             <Text fontSize={25} fontWeight={700} color='light'>
               LOGOS
             </Text>
-            <Box
-              display='flex'
-              flexDirection='column'
-              alignItems='center'
-              justifyContent='center'
-              bg='primary'
-              rounded='10px'
-              color='light'
-              cursor={'pointer'}
-              py={2}
-              px={3}
-            >
-              <Icon
-                icon='streamline:shopping-cart-subtract'
-                width='24'
-                height='24'
-              />
-              <Box as='span' w='80%' h='1px' bg='whiteAlpha.300' mt={'3px'} />
-              <Text fontSize='sm'>корзина</Text>
-            </Box>
+            <HStack>
+              <Box
+                display='flex'
+                flexDirection='column'
+                alignItems='center'
+                justifyContent='center'
+                bg='primary'
+                rounded='10px'
+                color='light'
+                cursor={'pointer'}
+                py={2}
+                px={3}
+              >
+                <Icon
+                  icon='streamline:shopping-cart-subtract'
+                  width='24'
+                  height='24'
+                />
+                <Box as='span' w='80%' h='1px' bg='whiteAlpha.300' mt={'3px'} />
+                <Text fontSize='sm'>корзина</Text>
+              </Box>
+              {access_token ? (
+                <>
+                  <Popover.Root>
+                    <Popover.Trigger asChild>
+                      <Box
+                        display='flex'
+                        flexDirection='column'
+                        alignItems='center'
+                        justifyContent='center'
+                        bg='primary'
+                        rounded='10px'
+                        color='light'
+                        cursor={'pointer'}
+                        py={2}
+                        px={3}
+                      >
+                        <Icon icon='mdi:user' width='24' height='24' />
+
+                        <Box
+                          as='span'
+                          w='80%'
+                          h='1px'
+                          bg='whiteAlpha.300'
+                          mt={'3px'}
+                        />
+                        <Text fontSize='sm'>Пользователь</Text>
+                      </Box>
+                    </Popover.Trigger>
+                    <Portal>
+                      <Popover.Positioner>
+                        <Popover.Content maxW={'150px'} p={0}>
+                          <Popover.Body p={1} bg={'dark'}>
+                            <Button
+                              w={'full'}
+                              variant={'outline'}
+                              color={'light'}
+                              _hover={{
+                                color: 'dark',
+                              }}
+                              onClick={() => dispatch(authActions.reset())}
+                            >
+                              <Icon icon='mdi:logout' width='24' height='24' />
+                              Выйти
+                            </Button>
+                          </Popover.Body>
+                        </Popover.Content>
+                      </Popover.Positioner>
+                    </Portal>
+                  </Popover.Root>
+                </>
+              ) : (
+                <Box
+                  display='flex'
+                  flexDirection='column'
+                  alignItems='center'
+                  justifyContent='center'
+                  bg='primary'
+                  rounded='10px'
+                  color='light'
+                  cursor={'pointer'}
+                  py={2}
+                  px={3}
+                  onClick={() =>
+                    access_token ? router.push('/cart') : setOpen(true)
+                  }
+                >
+                  <Icon icon='material-symbols:login' width='24' height='24' />
+                  <Box
+                    as='span'
+                    w='80%'
+                    h='1px'
+                    bg='whiteAlpha.300'
+                    mt={'3px'}
+                  />
+                  <Text fontSize='sm'>Вход</Text>
+                </Box>
+              )}
+            </HStack>
           </HStack>
           <InputGroup
             w={'full'}
@@ -156,6 +302,7 @@ const Header = () => {
             />
           </InputGroup>
         </Stack>
+        <Auth open={open} setOpen={setOpen} />
       </Container>
     </Box>
   );

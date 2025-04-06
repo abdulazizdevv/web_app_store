@@ -1,62 +1,66 @@
-import { createSlice } from '@reduxjs/toolkit'
-import { deleteCookie, setCookie } from 'cookies-next'
+// store/slices/authSlice.ts
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { setCookie, deleteCookie } from 'cookies-next';
+import { IUser } from '../types';
 
 interface IState {
-  user: {
-    name: string
-    date_of_birth: string
-    access_token: string
-  } | null
-  isError: boolean
-  isSuccess: boolean
-  isLoading: boolean
-  message: string
-  activeWindow: string
+  user: IUser | null;
+  access_token: IUser | null;
 }
 
 const initialState: IState = {
   user: null,
-  isError: false,
-  isSuccess: false,
-  isLoading: false,
-  message: '',
-  activeWindow: 'login',
-}
+  access_token: null,
+};
 
 export const { actions: authActions, reducer: authReducer } = createSlice({
   name: 'auth',
   initialState,
   reducers: {
     reset: (state) => {
-      state.isLoading = false
-      state.isError = false
-      state.isSuccess = false
-      state.message = ''
+      state.user = null;
+      state.access_token = null;
     },
+
     logout: () => {
-      deleteCookie('user_id', { path: '/' })
-      deleteCookie('access_token', { path: '/' })
-      return initialState
+      deleteCookie('user_id', { path: '/' });
+      deleteCookie('access_token', { path: '/' });
+      return initialState;
     },
-    setUser: (state, action) => {
-      state.user = action.payload
-      setCookie('user_id', action.payload?.id, {
+
+    setUser: (state, action: PayloadAction<any>) => {
+      const { accessToken, id, ...userData } = action.payload;
+
+      state.user = {
+        id,
+        username: userData.username,
+        email: userData.email,
+        firstName: userData.firstName,
+        lastName: userData.lastName,
+        gender: userData.gender,
+        image: userData.image,
+      };
+      state.access_token = accessToken;
+
+      setCookie('user_id', id, {
         maxAge: 30 * 24 * 60 * 60,
         path: '/',
-      })
-      setCookie('access_token', action.payload?.access_token, {
+      });
+
+      setCookie('access_token', accessToken, {
         maxAge: 30 * 24 * 60 * 60,
         path: '/',
-      })
+      });
     },
-    setActiveWindow: (state, action) => {
-      state.activeWindow = action.payload
-    },
-    updateUser: (state, action) => {
+
+    updateUser: (
+      state,
+      action: PayloadAction<{ firstName: string; lastName: string }>
+    ) => {
       if (state.user) {
-        state.user.name = action.payload.name
-        state.user.date_of_birth = action.payload.date_of_birth
+        state.user.firstName = action.payload.firstName;
+        state.user.lastName = action.payload.lastName;
       }
     },
   },
-})
+});
