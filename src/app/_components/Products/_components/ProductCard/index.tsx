@@ -31,8 +31,9 @@ const ProductCard = ({ data }: { data?: IProduct }) => {
             src={imgSrc}
             alt='pic'
             fill
-            loading='eager'
-            priority
+            placeholder='blur'
+            loading='lazy'
+            blurDataURL={imgSrc}
             onError={() => setImgSrc('/no_photo.svg')}
           />
         </AspectRatio>
