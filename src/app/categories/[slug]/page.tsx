@@ -42,7 +42,7 @@ async function getData(slug: string) {
 export default async function Category({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
 

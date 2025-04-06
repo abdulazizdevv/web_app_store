@@ -12,11 +12,6 @@ import {
 } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import sessionStorage from 'redux-persist/lib/storage/session';
-import cartReducer from './cart/cart.slice';
-import commonReducer from './common/common.slice';
-import checkoutReducer from './checkout/checkout.slice';
-import settingsReducer from './settings/settings.slice';
-import sessionReducer from './session/session.slice';
 import { authReducer } from './auth/auth.slice';
 
 // Define action type for resetting store
@@ -27,40 +22,10 @@ const authConfig = {
   version: 1,
   storage,
 };
-const cartConfig = {
-  key: 'cart',
-  version: 1,
-  storage,
-};
-const commonConfig = {
-  key: 'common',
-  version: 1,
-  storage,
-};
-const settingsConfig = {
-  key: 'settings',
-  version: 1,
-  storage,
-};
-const checkoutConfig = {
-  key: 'checkout',
-  version: 1,
-  storage: sessionStorage,
-};
-const sessionConfig = {
-  key: 'session',
-  version: 1,
-  storage: sessionStorage,
-};
 
 // Create the appReducer with all persisted reducers
 const appReducer = combineReducers({
   auth: persistReducer(authConfig, authReducer),
-  cart: persistReducer(cartConfig, cartReducer),
-  common: persistReducer(commonConfig, commonReducer),
-  checkout: persistReducer(checkoutConfig, checkoutReducer),
-  settings: persistReducer(settingsConfig, settingsReducer),
-  session: persistReducer(sessionConfig, sessionReducer),
 });
 
 // Create root reducer with reset capability
@@ -70,12 +35,6 @@ const rootReducer = (state: any, action: any) => {
     console.log('RESET_APP_STATE');
     // Clear localStorage persisted states
     storage.removeItem('persist:auth');
-    storage.removeItem('persist:cart');
-    storage.removeItem('persist:common');
-    storage.removeItem('persist:settings');
-
-    sessionStorage.removeItem('persist:session');
-    sessionStorage.removeItem('persist:checkout');
 
     return appReducer(undefined, action);
   }
