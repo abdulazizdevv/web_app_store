@@ -1,5 +1,7 @@
+'use client';
 import {
   Box,
+  Button,
   Container,
   Heading,
   HStack,
@@ -12,9 +14,11 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { Icon } from '@iconify/react/dist/iconify.js';
+import { useRouter } from 'next/navigation';
 import React from 'react';
 
 const Cart = () => {
+  const router = useRouter();
   return (
     <Container mt={'34px'}>
       <Text color={'white'} alignItems={'end'} display={'flex'}>
@@ -122,6 +126,11 @@ const Cart = () => {
             </HStack>
           </SimpleGrid>
         </Stack>
+      </Box>
+      <Box textAlign={'end'} pt={8} onClick={() => router.push('/checkout')}>
+        <Button justifyContent={'flex-end'} bg={'primary'} size={'lg'}>
+          Checkout
+        </Button>
       </Box>
     </Container>
   );

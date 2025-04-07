@@ -20,6 +20,7 @@ const Auth = ({
   open: boolean;
   setOpen: Dispatch<boolean>;
 }) => {
+  const [isLoading, setLoading] = useState(false);
   const [data, setData] = useState({
     username: '',
     password: '',
@@ -28,11 +29,15 @@ const Auth = ({
   const dispatch = useDispatch();
   const onSubmit = async () => {
     try {
+      setLoading(true);
+
       const result = await login(data);
       dispatch(authActions.setUser(result));
       setOpen(false);
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -47,7 +52,7 @@ const Auth = ({
         <Portal>
           <Dialog.Backdrop />
           <Dialog.Positioner>
-            <Dialog.Content bg={'dark'} color={'light'}>
+            <Dialog.Content bg={'dark'} mx={4} color={'light'}>
               <Dialog.Header>
                 <Dialog.Title>Auth</Dialog.Title>
               </Dialog.Header>
@@ -87,6 +92,7 @@ const Auth = ({
                   bg={'primary'}
                   size={'lg'}
                   rounded={8}
+                  loading={isLoading}
                 >
                   Submit
                 </Button>

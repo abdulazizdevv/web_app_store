@@ -166,9 +166,11 @@ const Header = () => {
                 МЕНЮ
               </Text>
             </Button>
-            <Text fontSize={25} fontWeight={700} color='light'>
-              LOGOS
-            </Text>
+            <Link href={'/'}>
+              <Text fontSize={25} fontWeight={700} color='light'>
+                LOGOS
+              </Text>
+            </Link>
             <HStack>
               <Box
                 display='flex'
@@ -181,6 +183,7 @@ const Header = () => {
                 cursor={'pointer'}
                 py={2}
                 px={3}
+                onClick={() => router.push('/cart')}
               >
                 <Icon
                   icon='streamline:shopping-cart-subtract'
